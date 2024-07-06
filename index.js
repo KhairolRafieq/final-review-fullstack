@@ -6,8 +6,8 @@ const bodyParser = require('body-parser')
 
 
 // routes
-const books = require('./routes/api/book');
 const users = require('./routes/api/user');
+const location = require('./routes/api/location');
 
 const app = express();
 //body-parse
@@ -26,7 +26,7 @@ app.use(express.json({ extended: false }));
 app.get('/', (req, res) => res.send('Hello world!'));
 
 // use Routes
-app.use('/api/books', books);
+app.use('/api/location', location);
 app.use('/api/users', users);
 app.use('/api1', authRoutes);
 

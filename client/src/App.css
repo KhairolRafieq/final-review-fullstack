@@ -9,7 +9,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #efe815;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -95,4 +95,8 @@
   color: #6c757d;
   font-size: 1em;
   padding: 10px 0 10px 0;
+}
+
+.w-full {
+  width: 100%;
 }
