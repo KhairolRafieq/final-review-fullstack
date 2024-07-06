@@ -1,5 +1,7 @@
 const express = require('express');
 const connectDB = require('./config/db');
+const path = require('path');
+
 var cors = require('cors');
 const authRoutes = require('./routes/userauth/auth');
 const bodyParser = require('body-parser')
@@ -29,6 +31,9 @@ app.get('/', (req, res) => res.send('Hello world!'));
 app.use('/api/location', location);
 app.use('/api/users', users);
 app.use('/api1', authRoutes);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
 
 const port = process.env.PORT || 8082;
 

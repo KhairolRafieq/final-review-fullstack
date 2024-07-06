@@ -2,9 +2,23 @@
 
 const express = require('express');
 const router = express.Router();
-
+const multer = require('multer');
+const path = require('path');
 // Load Book model
 const Location = require('../../models/Location');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Adjust the path to where you want to save the images
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'delivery-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+// Initialize multer with the storage configuration
+const upload = multer({ storage: storage });
 
 // @route GET api/books/test
 // @description tests books route
@@ -54,11 +68,22 @@ router.get('/:id', (req, res) => {
 // @route GET api/location
 // @description add/save location
 // @access Public
-router.post('/', (req, res) => {
-  Location.create(req.body)
-    .then(location => res.json({ msg: 'Location added successfully' }))
-    .catch(err => res.status(400).json({ error: req.body }));
+router.post('/', upload.single('image'), (req, res) => {
+  const { body, file } = req;
+  if (!file) {
+    return res.status(400).json({ error: 'Image file is required' });
+  }
+
+  const image_url = `uploads/${file.filename}`; // Adjust the path if necessary
+  const locationData = { ...body, image_url };
+
+  console.log('Location Data:', locationData); // Log locationData to see its structure
+
+  Location.create(locationData)
+    .then(location => res.json({ msg: 'Location added successfully', location }))
+    .catch(err => res.status(400).json({ error: err.message }));
 });
+
 
 // @route GET api/location/:id
 // @description Update location

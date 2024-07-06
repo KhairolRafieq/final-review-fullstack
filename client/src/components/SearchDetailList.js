@@ -126,7 +126,7 @@ const SearchDetailList = () => {
             </form>
             <div className="col-md-3">
               <Link to="/create-location" className="btn btn-outline-warning float-right">
-                + Add New Book
+                + Add New Location
               </Link>
               <br />
               <br />

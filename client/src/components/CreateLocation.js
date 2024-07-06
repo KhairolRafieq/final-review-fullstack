@@ -2,7 +2,7 @@ import React, { Component, useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../App.css';
 import axios from 'axios';
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useHistory } from 'react-router-dom';
 
 
@@ -152,10 +152,15 @@ import { useHistory } from 'react-router-dom';
 
 const CreateLocation = () => {
   const history = useHistory();
-  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+  const { register, handleSubmit, watch, control ,formState: { isSubmitting ,  errors } } = useForm();
   const onSubmit = (data) => {
+    // const formData = new FormData();
+    // formData.append('image', data.image[0]);
+    console.log(data,'kimk')
     axios
-      .post('http://localhost:8082/api/location', data)
+      .post('http://localhost:8082/api/location', data, { headers:{
+        'Content-Type': 'multipart/form-data'
+       }})
       .then(res => {
         history.push('/');
       })
@@ -163,22 +168,7 @@ const CreateLocation = () => {
         console.log(err)
         console.log("Error in CreateBook!");
       })
-    console.log(data);
-  }; // your form submit function which will invoke after successful validation
-   
-
-  // const [locationData, setLocationData] = useState(
-  //   {
-  //     name: '',
-  //     address: '',
-  //     description: ''
-  //   }
-  // );
-
-  // const updateData = (data) => {
-  //   set
-  // }
-
+  }; 
   return (
             <div className="CreateBook">
               <div className="container">
@@ -196,6 +186,7 @@ const CreateLocation = () => {
                     </p>
                     <form onSubmit={handleSubmit(onSubmit)}>
                       <div className='form-group'>
+                        <label htmlFor="name">Name *</label>
                         <input
                           type='text'
                           placeholder='Name of the Location'
@@ -206,6 +197,7 @@ const CreateLocation = () => {
                       </div>
                       <br />
                       <div className='form-group'>
+                      <label htmlFor="phone_number">Phone Number *</label>
                         <input
                           type='text'
                           placeholder='phone number'
@@ -215,6 +207,7 @@ const CreateLocation = () => {
                         />
                       </div>
                       <div className='form-group'>
+                      <label htmlFor="address">Address *</label>
                         <input
                           type='text'
                           placeholder='address'
@@ -224,6 +217,7 @@ const CreateLocation = () => {
                         />
                       </div>
                       <div className='form-group'>
+                      <label htmlFor="description">Description</label>
                         <input
                           type='text'
                           placeholder='Description'
@@ -232,9 +226,42 @@ const CreateLocation = () => {
                           {...register('description', {required: false})}
                         />
                       </div>
+                      <div className='form-group'>
+                      <label htmlFor="location_url">Location Url *</label>
+                        <input
+                          type='text'
+                          placeholder='Location Url'
+                          name='location_url'
+                          className='form-control'
+                          {...register('location_url', {required: true})}
+                        />
+                      </div>
+                      <div className='form-group'>
+                      <label htmlFor="image">Image *</label>
+                      <Controller
+                        control={control}
+                        name={"image"}
+                        rules={{ required: "Recipe picture is required" }}
+                        render={({ field: { value, onChange, ...field } }) => {
+                          return (
+                            <input
+                              {...field}
+                              value={value?.fileName}
+                              onChange={(event) => {
+                                onChange(event.target.files[0]);
+                              }}
+                              type="file"
+                              id="image"
+                            />
+                          );
+                        }}
+                      />
+                      </div>
                     
                       <input
                         type="submit"
+                        disabled={isSubmitting}
+                        // THis to avoid multiple submit
                         className="btn btn-outline-warning btn-block mt-4"
                       />
                     </form>
